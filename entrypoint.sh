@@ -46,8 +46,8 @@ map_track_to_trakt() {
 }
 
 sync() {
-  node ./index.js "$1" | \
-    jq --raw-output '[.Name, .Year, .["Date Added"]] | @tsv' | \
+  node ./read-plist.js "$1" | \
+    jq --raw-output '.Tracks | map(select(.Movie == true)) | .[] | [.Name, .Year, .["Date Added"]] | @tsv' | \
     map_track_to_trakt | \
     jq --slurp "{movies: .}" | \
     trakt_sync_collection
