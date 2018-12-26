@@ -1,53 +1,15 @@
 const fs = require("fs");
 const plist = require("plist");
-const ProgressBar = require("progress");
-const Trakt = require("trakt.tv");
 
-(async function() {
-  const trakt = new Trakt({
-    client_id: process.env["CLIENT_ID"],
-    client_secret: process.env["CLIENT_SECRET"],
-    redirect_uri: null
-  });
+const obj = plist.parse(fs.readFileSync(process.argv[2], "utf8"));
 
-  await trakt.import_token({
-    access_token: process.env["ACCESS_TOKEN"],
-    refresh_token: process.env["REFRESH_TOKEN"]
-  });
+const tracks = [];
+for (const track of Object.values(obj["Tracks"])) {
+  if (!track["Movie"]) continue;
+  tracks.push(track);
+}
 
-  const obj = plist.parse(fs.readFileSync(process.argv[2], "utf8"));
-
-  const tracks = [];
-  for (const track of Object.values(obj["Tracks"])) {
-    if (!track["Movie"]) continue;
-    tracks.push(track);
-  }
-
-  const bar = new ProgressBar(":bar", { total: tracks.length });
-
-  const movies = [];
-  for (const track of tracks) {
-    const results = await trakt.search.text({
-      query: track["Name"]
-        .replace(/[^\x00-\x7F]/g, "")
-        .replace(/\([^\)]+\)/, ""),
-      fields: "title",
-      type: "movie"
-    });
-
-    const result = results.find(result => result.movie.year === track["Year"]);
-    if (!result) continue;
-
-    const movie = {
-      ids: result.movie.ids,
-      year: track["Year"],
-      collected_at: track["Date Added"].toISOString(),
-      media_type: "digital"
-    };
-
-    movies.push(movie);
-    bar.tick();
-  }
-
-  console.log(JSON.stringify({ movies }))
-})();
+const movies = [];
+for (const track of tracks) {
+  console.log(JSON.stringify(track));
+}

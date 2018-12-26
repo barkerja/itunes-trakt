@@ -1,11 +1,6 @@
 {
   "private": true,
   "dependencies": {
-    "plist": "^3.0.1",
-    "progress": "^2.0.1",
-    "trakt.tv": "^7.0.0"
-  },
-  "devDependencies": {
-    "prettier": "^1.15.2"
+    "plist": "^3.0.1"
   }
 }
