@@ -12,7 +12,6 @@ const Trakt = require("trakt.tv");
 
   await trakt.import_token({
     access_token: process.env["ACCESS_TOKEN"],
-    // expires: 1550906735076,
     refresh_token: process.env["REFRESH_TOKEN"]
   });
 
@@ -50,6 +49,5 @@ const Trakt = require("trakt.tv");
     bar.tick();
   }
 
-  const response = await trakt.sync.collection.add({ movies });
-  console.log(response);
+  console.log(JSON.stringify({ movies }))
 })();
