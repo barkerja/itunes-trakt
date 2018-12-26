@@ -4,8 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y curl jq
 
-COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install plist@3.0.1
 
 COPY . .
 
