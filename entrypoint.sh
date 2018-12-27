@@ -21,18 +21,15 @@ trakt_sync_collection() {
 }
 
 trakt_search() {
-  QUERY=$(echo $1 | sed -e "s/[^a-zA-Z0-9 ']//g")
+  TITLE="$1"
   YEAR="$2"
-  CACHE="$CACHEDIR/$YEAR-$QUERY"
+  CACHE="$CACHEDIR/$YEAR-$TITLE"
 
   if [ ! -f "$CACHE" ]; then
-    CURL_RESULT=$(trakt_curl "/search/movie" --get --data-urlencode "fields=title" --data-urlencode "query=$QUERY")
-    echo "$CURL_RESULT" | jq --argjson year "$YEAR" \
-      'map(select(.score > 900 and (.movie.year == $year-1 or .movie.year == $year or .movie.year == $year+1))) | first | .movie' > "$CACHE~"
+    ./trakt-search.sh "$TITLE" "$YEAR" > "$CACHE~"
     mv "$CACHE~" "$CACHE"
   fi
 
-  RESULT=$(cat "$CACHE")
   cat "$CACHE"
 }
 
