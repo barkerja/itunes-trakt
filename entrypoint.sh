@@ -46,11 +46,11 @@ map_track_to_trakt() {
 }
 
 sync() {
-  node ./read-plist.js "$1" | \
+  plist-cli -d | \
     jq --raw-output '.Tracks | map(select(.Movie == true)) | .[] | [.Name, .Year, .["Date Added"]] | @tsv' | \
     map_track_to_trakt | \
     jq --slurp "{movies: .}" | \
     trakt_sync_collection
 }
 
-sync "$1"
+cat "$1" | sync
